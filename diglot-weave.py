@@ -152,6 +152,9 @@ for word in wordList:
         skippedWords += int(argv[4])
         
     headStart -= 1
+    
+    if(headStart >= 0):
+        print(headStart)
 
 f = open('translatedText.txt', 'w')
 print("\nFinal String:")
