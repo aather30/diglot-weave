@@ -1,6 +1,6 @@
 Install the following libraries:
-i. Re
-ii. Google trans
+i. pip install re
+ii. pip install googletrans
 
 Run the following command on your console:
 
@@ -14,3 +14,13 @@ python diglot-weave.py 1 2 3 4 5
 
 Example command:
 python diglot-weave.py list.txt sample.txt es 5 10
+
+Output:
+At the end of execution, the translated text is stored in a file in the same directory.
+Note that the program keeps outputting the text that has been translated so the user does not have to wait till the end.
+
+Suggestion:
+If you want to test the program, and need instant outputs ( < 3 minutes ), keep the text file limited to 1000 words and the head Start to be less than 20.
+
+Note:
+We added a counter as well that is printed, displaying how many "head start words" are left. You'll start seeing the translated text after it hits 0. (kind of works like a countdown)
