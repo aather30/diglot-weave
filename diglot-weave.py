@@ -27,19 +27,19 @@ def checkNeighbourhood(current):
     temp = current
     
     #checking neighbourhood backwards
-    currentWord = re.sub('[^A-Za-z0-9.]+', '', inputTextArray[current]).lower()
+    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower()
     
     while((currentWord in translatedWords and current > 0) ):
         current -= 1
         if(inputTextArray[current] == "#"):
             current-=1
-        currentWord = re.sub('[^A-Za-z0-9.]+', '', inputTextArray[current]).lower() 
+        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() 
         
     backPointer = current + 1 if current !=temp else current
     current = temp
     
     #checking neighbourhood forwards
-    currentWord = re.sub('[^A-Za-z0-9.]+', '', inputTextArray[current]).lower()
+    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower()
     
     while(currentWord in translatedWords and current< len(inputTextArray) - 1):
         current += 1
@@ -47,11 +47,11 @@ def checkNeighbourhood(current):
         if(inputTextArray[current] == "#"):
             current+=1
             
-        currentWord = re.sub('[^A-Za-z0-9.]+', '', inputTextArray[current]).lower()  
+        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower()  
         
     frontPointer = current
     
-    if currentWord.replace('.', '') in translatedWords:
+    if re.sub('[.,?;:-]+', '', currentWord) in translatedWords:
         frontPointer += 1
         
     phrase = ' '.join(inputTextArray[backPointer: frontPointer])
@@ -90,7 +90,7 @@ for word in wordList:
     translatedWords.append(word)
     
     #Optimization 2   
-    dictFlag = True
+    #dictFlag = True
 
     print('Number of words left: ')
 
@@ -99,28 +99,28 @@ for word in wordList:
  
         if word == re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]).lower():
 
-            if dictFlag:
-                dictionary[word] = translate(word)
-                dictFlag = False
-
+            # if dictFlag:
+            #     dictionary[word] = translate(word)
+            #     dictFlag = False
 
             backPointer, frontPointer, phrase = checkNeighbourhood(i)  
 
             translatedPhrase = ''
 
-            if frontPointer - backPointer == 1:
-                translatedPhrase = re.sub('[A-Za-z0-9]+', dictionary[word], phrase)
-            else:
-                translatedPhrase = translate(phrase)
-            
-            translatedStr = ' '.join(translatedTextArray)    
+            filteredPhrase = re.sub('[^A-Za-z0-9 ]+', '', phrase)
+
+            if filteredPhrase not in dictionary:
+                dictionary[filteredPhrase] = translate(filteredPhrase)
+
+            translatedPhrase = re.sub('[A-Za-z0-9 ]+', dictionary[filteredPhrase], phrase)
+             
             
             #[11,12,13]
             insertStrArray = translatedPhrase.split(" ")
 
             #removal
             translatedTextArray = translatedTextArray[0:backPointer] + translatedTextArray[frontPointer:]
-            
+
             #insertion
             for insertWord in insertStrArray[::-1]:
                 translatedTextArray.insert(backPointer, insertWord)
@@ -159,9 +159,9 @@ for word in wordList:
         
     headStart -= 1
     
-
-
 f = open('translatedText.txt', 'w')
 print("\nFinal String:")
 print(translatedStr.replace('# ', ''))
 f.write('' + translatedStr.replace('# ', ''))
+
+print(dictionary)
