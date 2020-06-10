@@ -88,20 +88,13 @@ for word in wordList:
         break
 
     translatedWords.append(word)
-    
-    #Optimization 2   
-    #dictFlag = True
 
-    print('Number of words left: ')
+    print('\nNumber of words left: ')
 
     i = skippedWords
     while i < len(inputTextArray):    
  
         if word == re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]).lower():
-
-            # if dictFlag:
-            #     dictionary[word] = translate(word)
-            #     dictFlag = False
 
             backPointer, frontPointer, phrase = checkNeighbourhood(i)  
 
