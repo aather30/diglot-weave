@@ -24,3 +24,5 @@ If you want to test the program, and need instant outputs ( < 3 minutes ), keep 
 
 Note:
 We added a counter as well that is printed, displaying how many "head start words" are left. You'll start seeing the translated text after it hits 0. (kind of works like a countdown)
+
+end
