@@ -11,12 +11,12 @@ if len(sys.argv) != 6:
 argv = sys.argv[1:]
 
 #reading list of words from a file and converting the list in an array
-wordList = open(argv[0], 'r').read().split('\n')
+wordList = open(argv[0], 'r', encoding="utf8").read().split('\n')
 #removing the last character from the array
 wordList.pop()
 
 #reading the file that has to be translated
-inputText = open(argv[1], 'r').read()
+inputText = open(argv[1], 'r', encoding="utf8").read()
 inputTextArray = inputText.split(' ')
 inputTextArray.append(" ")
 
@@ -61,7 +61,7 @@ def checkNeighbourhood(current):
 #method which takes in the text to be translated, calls the API and returns the translated text
 def translate(text):
     #adding a wait of 2 seconds to ovoid exceeding translation limit
-    time.sleep(0.2)
+    #time.sleep()
     
     #translating the text into given language
     translator = googletrans.Translator()
@@ -91,6 +91,8 @@ for word in wordList:
     
     #Optimization 2   
     dictFlag = True
+
+    print('Number of words left: ')
 
     i = skippedWords
     while i < len(inputTextArray):    
@@ -142,6 +144,10 @@ for word in wordList:
          
         i += 1
         
+        print(len(inputTextArray) - i, end='\r')
+        
+    print()
+        
     if headStart < 1:
         printArray = translatedStr.replace('# ', '').split(' ')
         
@@ -153,8 +159,7 @@ for word in wordList:
         
     headStart -= 1
     
-    if(headStart >= 0):
-        print(headStart)
+
 
 f = open('translatedText.txt', 'w')
 print("\nFinal String:")
