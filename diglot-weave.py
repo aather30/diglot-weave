@@ -163,5 +163,3 @@ f = open('translatedText.txt', 'w')
 print("\nFinal String:")
 print(translatedStr.replace('# ', ''))
 f.write('' + translatedStr.replace('# ', ''))
-
-print(dictionary)
