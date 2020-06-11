@@ -4,8 +4,8 @@ import re
 import sys
 
 #getting correct command line parameters
-if len(sys.argv) != 6:
-    print('Run the program with such parameters: "python diglot-weave.py <list.txt> <gameofthrones.txt> <es> <5> <10>')
+if len(sys.argv) != 7:
+    print('\nRun the program with such parameters: "python diglot-weave.py <list.txt> <gameofthrones.txt> <es> <5> <10> <translatedFilename>')
     exit()
 
 argv = sys.argv[1:]
@@ -63,12 +63,20 @@ def translate(text):
     #adding a wait of 2 seconds to ovoid exceeding translation limit
     #time.sleep()
     
-    #translating the text into given language
-    translator = googletrans.Translator()
-    #'des' equals to the language in which the text has to be translated
-    translatedText = translator.translate(text, src='en', dest=argv[2]).text
-    
-    return translatedText
+    try:
+        #translating the text into given language
+        translator = googletrans.Translator()
+        #'des' equals to the language in which the text has to be translated
+        translatedText = translator.translate(text, src='en', dest=argv[2]).text
+        
+        return translatedText
+
+    except:
+        print("\nThere was an error in connection. We saved the text that was translated uptil this point.\n\n")
+        f = open(argv[5], 'w')
+        f.write('' + translatedStr.replace('# ', ''))
+
+
 
 #Runner
 
@@ -98,18 +106,20 @@ for word in wordList:
 
             backPointer, frontPointer, phrase = checkNeighbourhood(i)  
 
+           
             translatedPhrase = ''
 
-            filteredPhrase = re.sub('[^A-Za-z0-9 ]+', '', phrase)
-
+            filteredPhrase = re.sub('[^A-Za-z0-9# ]+', '', phrase)
+        
             if filteredPhrase not in dictionary:
                 dictionary[filteredPhrase] = translate(filteredPhrase)
 
-            translatedPhrase = re.sub('[A-Za-z0-9 ]+', dictionary[filteredPhrase], phrase)
-             
-            
+            translatedPhrase = re.sub('[A-Za-z0-9# ]+', dictionary[filteredPhrase], phrase)
+       
             #[11,12,13]
             insertStrArray = translatedPhrase.split(" ")
+
+           
 
             #removal
             translatedTextArray = translatedTextArray[0:backPointer] + translatedTextArray[frontPointer:]
@@ -119,6 +129,11 @@ for word in wordList:
                 translatedTextArray.insert(backPointer, insertWord)
             
             translatedStr = ' '.join(translatedTextArray)    
+            # print("phrase:",phrase)
+            # print("filteredPhrase:",filteredPhrase)
+            # print("translatedPhrase:", translatedPhrase)
+            # print("insertStrArray:",insertStrArray)
+            #print(translatedStr)
 
             translatedTextArray = translatedStr.split(' ')
             
@@ -137,7 +152,7 @@ for word in wordList:
          
         i += 1
         
-        print(len(inputTextArray) - i, end='\r')
+        print(len(inputTextArray) - i,"  ", end='\r')
         
     print()
         
@@ -147,12 +162,12 @@ for word in wordList:
         printStr = ' '.join(printArray[skippedWords:skippedWords+int(argv[4])])
 
         if printStr != '':
-            print(printStr + ' ', end='')
+            print(printStr + '\t\t', end='')
         skippedWords += int(argv[4])
         
     headStart -= 1
     
-f = open('translatedText.txt', 'w')
+f = open(argv[5], 'w')
 print("\nFinal String:")
 print(translatedStr.replace('# ', ''))
 f.write('' + translatedStr.replace('# ', ''))
