@@ -73,7 +73,7 @@ def translate(text):
 
     except:
         print("\nThere was an error in connection. We saved the text that was translated uptil this point.\n\n")
-        f = open(argv[5], 'w')
+        f = open(argv[5], 'w', encoding="utf8", errors="ignore")
         f.write('' + translatedStr.replace('# ', ''))
 
 
@@ -167,7 +167,7 @@ for word in wordList:
         
     headStart -= 1
     
-f = open(argv[5], 'w')
+f = open(argv[5], 'w', encoding="utf8", errors="ignore")
 print("\nFinal String:")
 print(translatedStr.replace('# ', ''))
 f.write('' + translatedStr.replace('# ', ''))
