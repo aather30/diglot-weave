@@ -17,6 +17,10 @@ wordList.pop()
 
 #reading the file that has to be translated
 inputText = open(argv[1], 'r', encoding="utf8").read()
+
+#making \n as an individual 
+inputText = inputText.replace("\n", " \n ")
+
 inputTextArray = inputText.split(' ')
 inputTextArray.append(" ")
 
@@ -27,19 +31,19 @@ def checkNeighbourhood(current):
     temp = current
     
     #checking neighbourhood backwards
-    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower()
+    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if inputTextArray[current] != "I" else "I"
     
     while((currentWord in translatedWords and current > 0) ):
         current -= 1
         if(inputTextArray[current] == "#"):
             current-=1
-        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() 
+        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if inputTextArray[current] != "I" else "I"
         
     backPointer = current + 1 if current !=temp else current
     current = temp
     
     #checking neighbourhood forwards
-    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower()
+    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if inputTextArray[current] != "I" else "I"
     
     while(currentWord in translatedWords and current< len(inputTextArray) - 1):
         current += 1
@@ -47,7 +51,7 @@ def checkNeighbourhood(current):
         if(inputTextArray[current] == "#"):
             current+=1
             
-        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower()  
+        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if inputTextArray[current] != "I" else "I" 
         
     frontPointer = current
     
@@ -102,7 +106,7 @@ for word in wordList:
     i = skippedWords
     while i < len(inputTextArray):    
  
-        if word == re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]).lower():
+        if word == re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]).lower() or (word == inputTextArray[i] == "I"):
 
             backPointer, frontPointer, phrase = checkNeighbourhood(i)  
 
@@ -160,12 +164,12 @@ for word in wordList:
         printStr = ' '.join(printArray[skippedWords:skippedWords+int(argv[4])])
 
         if printStr != '':
-            print(printStr + '\t\t', end='')
+            print(printStr.replace(" \n ", "\n") + '\t\t', end='')
         skippedWords += int(argv[4])
         
     headStart -= 1
     
 f = open(argv[5], 'w', encoding="utf8", errors="ignore")
 print("\nFinal String:")
-print(translatedStr.replace('# ', ''))
-f.write('' + translatedStr.replace('# ', ''))
+print(translatedStr.replace('# ', '').replace(" \n ", "\n"))
+f.write('' + translatedStr.replace('# ', '').replace(" \n ", "\n"))
