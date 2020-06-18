@@ -108,13 +108,11 @@ for word in wordList:
 
            
             translatedPhrase = ''
-
-            filteredPhrase = re.sub('[^A-Za-z0-9# ]+', '', phrase)
         
-            if filteredPhrase not in dictionary:
-                dictionary[filteredPhrase] = translate(filteredPhrase)
+            if phrase not in dictionary:
+                dictionary[phrase] = translate(phrase)
 
-            translatedPhrase = re.sub('[A-Za-z0-9# ]+', dictionary[filteredPhrase], phrase)
+            translatedPhrase = dictionary[phrase]
        
             #[11,12,13]
             insertStrArray = translatedPhrase.split(" ")
