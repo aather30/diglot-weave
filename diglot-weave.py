@@ -31,19 +31,19 @@ def checkNeighbourhood(current):
     temp = current
     
     #checking neighbourhood backwards
-    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if inputTextArray[current] != "I" else "I"
+    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]) != "I" else "I"
     
     while((currentWord in translatedWords and current > 0) ):
         current -= 1
         if(inputTextArray[current] == "#"):
             current-=1
-        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if inputTextArray[current] != "I" else "I"
+        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]) != "I" else "I"
         
     backPointer = current + 1 if current !=temp else current
     current = temp
     
     #checking neighbourhood forwards
-    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if inputTextArray[current] != "I" else "I"
+    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]) != "I" else "I"
     
     while(currentWord in translatedWords and current< len(inputTextArray) - 1):
         current += 1
@@ -51,7 +51,7 @@ def checkNeighbourhood(current):
         if(inputTextArray[current] == "#"):
             current+=1
             
-        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if inputTextArray[current] != "I" else "I" 
+        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]) != "I" else "I" 
         
     frontPointer = current
     
@@ -94,6 +94,8 @@ skippedWords = 0
 
 dictionary = {}
 
+br = False
+
 for word in wordList:
     #Optimization 1
     if skippedWords > len(inputTextArray):
@@ -106,11 +108,10 @@ for word in wordList:
     i = skippedWords
     while i < len(inputTextArray):    
  
-        if word == re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]).lower() or (word == inputTextArray[i] == "I"):
+        if word == re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]).lower() or (word == re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]) == "I"):
 
             backPointer, frontPointer, phrase = checkNeighbourhood(i)  
 
-           
             translatedPhrase = ''
         
             if phrase not in dictionary:
@@ -132,12 +133,14 @@ for word in wordList:
             
             translatedStr = ' '.join(translatedTextArray)    
             # print("phrase:",phrase)
-            # print("filteredPhrase:",filteredPhrase)
             # print("translatedPhrase:", translatedPhrase)
             # print("insertStrArray:",insertStrArray)
-            #print(translatedStr)
+            # print(translatedStr)
 
             translatedTextArray = translatedStr.split(' ')
+            # print("translated text array", translatedTextArray)
+            # print("f: ", frontPointer)
+            # print("b: ", backPointer)
             
             if len(translatedPhrase.split(' ')) > len(phrase.split(' ')):
                 diff = len(translatedPhrase.split(' ')) - len(phrase.split(' ')) 
@@ -151,8 +154,15 @@ for word in wordList:
                 
                 for count in range(diff):
                     translatedTextArray.insert(backPointer, '#')     
-         
+        
+            if (int(frontPointer) - int(backPointer)) == len(inputTextArray):
+                br = True
+                break
+        
         i += 1
+        
+        if br == True:
+            break
         
         print(len(inputTextArray) - i,"  ", end='\r')
         
