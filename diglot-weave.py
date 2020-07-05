@@ -155,7 +155,7 @@ for word in wordList:
                 for count in range(diff):
                     translatedTextArray.insert(backPointer, '#')     
         
-            if (int(frontPointer) - int(backPointer)) == len(inputTextArray):
+            if int(frontPointer) == len(inputTextArray):
                 br = True
                 break
         
