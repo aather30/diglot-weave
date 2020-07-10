@@ -11,9 +11,9 @@ if len(sys.argv) != 7:
 argv = sys.argv[1:]
 
 #reading list of words from a file and converting the list in an array
-wordList = open(argv[0], 'r', encoding="utf8").read().split('\n')
+phraseList = open(argv[0], 'r', encoding="utf8").read().split('\n')
 #removing the last character from the array
-wordList.pop()
+phraseList.pop()
 
 #reading the file that has to be translated
 inputText = open(argv[1], 'r', encoding="utf8").read()
@@ -27,23 +27,21 @@ inputTextArray.append(" ")
 translatedTextArray = inputTextArray
 
 #method which checks if the neighbours of the current word from the input file are translated or not
-def checkNeighbourhood(current):
-    temp = current
+def checkNeighbourhood(backPointer, current):
     
     #checking neighbourhood backwards
-    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]) != "I" else "I"
+    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[backPointer]).lower() if re.sub('[^A-Za-z0-9]+', '', inputTextArray[backPointer]) != "I" else "I"
     
-    while((currentWord in translatedWords and current > 0) ):
-        current -= 1
-        if(inputTextArray[current] == "#"):
-            current-=1
-        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]) != "I" else "I"
+    while((currentWord in translatedWords and backPointer > 0) ):
+        backPointer -= 1
+        if(inputTextArray[backPointer] == "#"):
+            backPointer-=1
+        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[backPointer]).lower() if re.sub('[^A-Za-z0-9]+', '', inputTextArray[backPointer]) != "I" else "I"
         
-    backPointer = current + 1 if current !=temp else current
-    current = temp
+    backPointer = backPointer + 1 if backPointer !=temp else backPointer
     
     #checking neighbourhood forwards
-    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]) != "I" else "I"
+    currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if re.sub('[^A-Za-z0-9]+', '', inputTextArray[current]) != "I" else "I"
     
     while(currentWord in translatedWords and current< len(inputTextArray) - 1):
         current += 1
@@ -51,7 +49,7 @@ def checkNeighbourhood(current):
         if(inputTextArray[current] == "#"):
             current+=1
             
-        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]) != "I" else "I" 
+        currentWord = re.sub('[^A-Za-z0-9.,?;:-]+', '', inputTextArray[current]).lower() if re.sub('[^A-Za-z0-9]+', '', inputTextArray[current]) != "I" else "I" 
         
     frontPointer = current
     
@@ -96,21 +94,41 @@ dictionary = {}
 
 br = False
 
-for word in wordList:
+for word in phraseList:
+
     #Optimization 1
     if skippedWords > len(inputTextArray):
         break
+    
+    #splitting a phrase into words
+    words = word.split(' ') 
 
     translatedWords.append(word)
 
     print('\nNumber of words left: ')
 
     i = skippedWords
-    while i < len(inputTextArray):    
- 
-        if word == re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]).lower() or (word == re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]) == "I"):
+    while i < len(inputTextArray):
 
-            backPointer, frontPointer, phrase = checkNeighbourhood(i)  
+        phraseFlag = False 
+        temp = 0
+        backPointer = i
+        for j, w in enumerate(words):
+            if w == re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]).lower() or (w == re.sub('[^A-Za-z0-9]+', '', inputTextArray[i]) == "I"):
+                i+=1
+                temp+=1
+                
+            else:
+                i -= temp
+                break
+            
+            if temp == len(words) - 1:
+                phraseFlag = True
+
+ 
+        if phraseFlag:
+
+            backPointer, frontPointer, phrase = checkNeighbourhood(backPointer, i)  
 
             translatedPhrase = ''
         
