@@ -24,7 +24,7 @@ inputText = inputText.replace("\n", " \n ")
 inputTextArray = inputText.split(' ')
 inputTextArray.append(" ")
 
-translatedTextArray = inputTextArray
+translatedTextArray = inputTextArray[:]
 
 #method which checks if the neighbours of the current word from the input file are translated or not
 def checkNeighbourhood(backPointer, current):
@@ -34,10 +34,9 @@ def checkNeighbourhood(backPointer, current):
     currentWord = inputTextArray[backPointer].lower() if re.sub('[^A-Za-z0-9]+', '', inputTextArray[backPointer]) != "I" else inputTextArray[backPointer]
     currentWord = re.sub('[^A-Za-z0-9.?]+', '', currentWord)
 
-    print("current word:", currentWord)
-    while((currentWord in translatedWords or inputTextArray[backPointer] == "$&")  and backPointer > 0):
+    while((currentWord in translatedWords or inputTextArray[backPointer] == "&$")  and backPointer > 0):
         
-        if(inputTextArray[backPointer] == "$&"):
+        if(inputTextArray[backPointer] == "&$"):
             backPointer -= 1
 
             while(inputTextArray[backPointer] != "$&"):
@@ -68,7 +67,7 @@ def checkNeighbourhood(backPointer, current):
         if(inputTextArray[current] == "$&"):
             current += 1
 
-            while(inputTextArray[current] != "$&"):
+            while(inputTextArray[current] != "&$"):
                 current += 1
         current += 1
         
@@ -85,10 +84,10 @@ def checkNeighbourhood(backPointer, current):
         currentWord = re.sub('[^A-Za-z0-9.?]+', '', currentWord)  
 
     frontPointer = current
-
-    if re.sub('[.?]+', '', currentWord) in translatedWords:
+    
+    if (re.sub('[.?]+', '', currentWord) in translatedWords )or ("." not in inputTextArray[current] and inputTextArray[current+1]=="&$"):
         frontPointer += 1
-        
+            
     phrase = ' '.join(inputTextArray[backPointer: frontPointer])
     
     return backPointer, frontPointer, phrase
@@ -137,7 +136,7 @@ for word in phraseList:
 
     translatedWords.append(word)
 
-    #print('\nNumber of words left: ')
+    print('\nNumber of words left: ')
 
     i = skippedWords
     while i < len(inputTextArray):
@@ -155,41 +154,47 @@ for word in phraseList:
             if w == inputWord:
                 i+=1
                 temp+=1
-                print("Input Word new: ", inputWord)
-                print("w: ", w)
-                print(words)
+                # print("Input Word new: ", inputWord)
+                # print("w: ", w)
+                # print(words)
                 
             else:
                 i -= temp
                 break
             
-            print("temp: ", temp)
-            print("len: ", len(words))
+            # print("temp: ", temp)
+            # print("len: ", len(words))
             if temp == len(words):
                 i -= 1
                 phraseFlag = True
 
  
         if phraseFlag:
+            # print("back pointer: ", backPointer)
+            # print("I: ", i)
 
             if backPointer != i:
                 inputTextArray.insert(backPointer, '$&')
-                inputTextArray.insert(i + 2, '$&')
+
+                inputTextArray.insert(i+2, '&$')
 
                 translatedTextArray.insert(backPointer, '$&')
-                translatedTextArray.insert(i + 2, '$&')
-            backPointer += 1
-            i += 1
+                translatedTextArray.insert(i + 2, '&$')
             
-            print("back pointer: ", backPointer)
-            print("I: ", i)
+                backPointer += 1
+                i += 1
+            # print(inputTextArray)
+            # print(translatedTextArray)
+            # print("back pointer: ", backPointer)
+            # print("I: ", i)
 
             backPointer, frontPointer, phrase = checkNeighbourhood(backPointer, i)  
-
-            print("Input word:", inputWord)
+            phrase = phrase.replace("$&","")
+            phrase = phrase.replace("&$","")
+            # print("Input word:", inputWord)
 
             #backPointer, frontPointer, phrase = checkNeighbourhood(i)  
-            print("phrase:",phrase, backPointer, frontPointer)
+            #print("phrase:",phrase, backPointer, frontPointer)
             
             translatedPhrase = ''
         
@@ -197,7 +202,7 @@ for word in phraseList:
                 dictionary[phrase] = translate(phrase).lower()
 
             translatedPhrase = dictionary[phrase]
-            print("translatedPhrase:", translatedPhrase)
+            #print("translatedPhrase:", translatedPhrase)
             
             #[11,12,13]
             insertStrArray = translatedPhrase.split(" ")
@@ -212,9 +217,9 @@ for word in phraseList:
             
             translatedStr = ' '.join(translatedTextArray)    
 
-            print("translatedPhrase:", translatedPhrase)
-            print("insertStrArray:",insertStrArray)
-            print(translatedStr)
+            # print("translatedPhrase:", translatedPhrase)
+            # print("insertStrArray:",insertStrArray)
+            # print(translatedStr)
 
             translatedTextArray = translatedStr.split(' ')
             
@@ -233,7 +238,7 @@ for word in phraseList:
          
         i += 1
         
-        #print(len(inputTextArray) - i,"  ", end='\r')
+        print(len(inputTextArray) - i,"  ", end='\r')
         
         
     if headStart < 1:
@@ -250,7 +255,7 @@ for word in phraseList:
 f = open(argv[5], 'w', encoding="utf8", errors="ignore")
 print("\nFinal String:")
 
-translatedStr = translatedStr.replace('# ', '').replace(" \n ", "\n").replace("$& ", "")
+translatedStr = translatedStr.replace('# ', '').replace(" \n ", "\n").replace("$& ", "").replace("&$ ", "")
 
 print(translatedStr)
 f.write('' + translatedStr)
