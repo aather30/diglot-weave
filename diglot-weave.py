@@ -14,7 +14,6 @@ argv = sys.argv[1:]
 phraseList = open(argv[0], 'r', encoding="utf8").read().split('\n')
 #removing the last character from the array
 #phraseList.pop()
-print("phraselist : ", phraseList)
 #reading the file that has to be translated
 inputText = open(argv[1], 'r', encoding="utf8").read()
 
