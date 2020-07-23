@@ -84,7 +84,7 @@ def checkNeighbourhood(backPointer, current):
 
     frontPointer = current
     
-    if (re.sub('[.?]+', '', currentWord) in translatedWords )or ("." not in inputTextArray[current] and inputTextArray[current+1]=="&$"):
+    if (current + 1 < len(inputTextArray)) and ((re.sub('[.?]+', '', currentWord) in translatedWords )or ("." not in inputTextArray[current] and inputTextArray[current+1]=="&$")):
         frontPointer += 1
             
     phrase = ' '.join(inputTextArray[backPointer: frontPointer])
